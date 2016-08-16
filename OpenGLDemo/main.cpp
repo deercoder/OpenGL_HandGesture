@@ -283,34 +283,12 @@ main(int argc, char **argv)
     glutAddMenuEntry("yes", 1);
     glutAddMenuEntry("no", 2);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
-    win2 = glutCreateWindow("second window");
-    glutEntryFunc(enter_leave);
-    glutKeyboardFunc(keyboard);
-    glutSpecialFunc(special);
-    glutMouseFunc(mouse);
+    
 #if 0
     glutMotionFunc(motion);
 #endif
-    glutVisibilityFunc(visible);
-    init();
-    light_diffuse[1] = 1;
-    light_diffuse[2] = 1;
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glutDisplayFunc(display);
-    submenu1 = glutCreateMenu(it);
-    glutAddMenuEntry("submenu a", 666);
-    glutAddMenuEntry("submenu b", 777);
-    submenu2 = glutCreateMenu(it);
-    glutAddMenuEntry("submenu 1", 25);
-    glutAddMenuEntry("submenu 2", 26);
-    glutAddSubMenu("submenuXXX", submenu1);
-    glutCreateMenu(it);
-    glutAddSubMenu("submenu", submenu2);
-    glutAddMenuEntry("stop motion", 5);
-    glutAddMenuEntry("delayed stop motion", 6);
-    glutAddSubMenu("submenu", submenu2);
-    glutAttachMenu(GLUT_LEFT_BUTTON);
-    glutMenuStateFunc(menustate);
+
+
     glutMainLoop();
     return 0;             /* ANSI C requires main to return int. */
 }
