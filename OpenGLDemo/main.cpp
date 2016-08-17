@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <unistd.h>
+
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -37,6 +39,8 @@
 GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
 GLUquadricObj *qobj;
+static GLfloat move=0.0;                //平移量
+
 
 int win1, win2, submenu1, submenu2;
 
@@ -46,7 +50,9 @@ float thetime = 0.0;
 
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+            
+            );
 	if (glutGetWindow() == win1) {
 		glCallList(list);   /* render sphere display list */
 	} else {
@@ -158,6 +164,10 @@ void keyboard(unsigned char key, int x, int y)
 	} else {
 		printf("key: 0x%x %d,%d\n", key, x, y);
 	}
+    
+    glTranslatef(0.0, 0.0, -1.0);
+    
+    
 }
 
 void special(int key, int x, int y)
@@ -254,6 +264,15 @@ void enter_leave(int state)
 			state == GLUT_LEFT ? "left" : "entered");
 }
 
+
+void moveDisplay()
+{
+    move=move>20?move-=20:move+=1;
+    glutPostRedisplay();                //标记当前窗口需要重绘，否则不会旋转
+    sleep(10);
+}
+
+
 int main(int argc, char **argv)
 {
 	qobj = gluNewQuadric();
@@ -263,6 +282,8 @@ int main(int argc, char **argv)
 	glutEntryFunc(enter_leave);
 	init();
 	glutDisplayFunc(display_win1);
+    //glutKeyboardFunc(keyboard);
+    glutIdleFunc(moveDisplay);
 	glutCreateMenu(it);
 	glutAddMenuEntry("toggle draw mode", 1);
 	glutAddMenuEntry("exit", 2);
