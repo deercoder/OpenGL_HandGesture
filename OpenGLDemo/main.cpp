@@ -39,85 +39,66 @@
 GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
 GLUquadricObj *qobj;
-static GLfloat move=0.0;                //平移量
+float ballX = 0.0f;
+float ballY = 0.0f;
+float ballZ = -1.0f;
+float scale = 0.0f;
 
 
-int win1, win2, submenu1, submenu2;
+int win1;
 
 int list = 1;
 
-float thetime = 0.0;
+
+
+
 
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
-            
-            );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (glutGetWindow() == win1) {
 		glCallList(list);   /* render sphere display list */
 	} else {
 		glCallList(1);      /* render sphere display list */
 	}
+    
 	glutSwapBuffers();
 }
 
+void keyboard_s(unsigned char key, int x, int y)
+{
+    printf("trigger the keyboard, (%c,%d,%d)\n", key, x, y);
+    switch (key)
+    {
+            case 'h' : ballX -= 0.05f;
+                break;
+            case 'l' : ballX  += 0.05f;
+                break;
+            case 'k' : ballY += 0.05f;
+                break;
+            case 'j' : ballY -= 0.05f;
+                break;
+            case 'r' : ballZ += 0.05f;
+                break;
+            case 'f' : ballZ -= 0.05f;
+                break;
+            case 'p': scale += 0.02;
+                break;
+            case 'q': scale -= 0.02;
+                break;
+            default:
+                break;
+    }
+}
+                 
+                 
 void display_win1(void)
 {
 	glPushMatrix();
-	glTranslatef(0.0, 0.0, -1 - 2 * sin(thetime));
+    glTranslatef(ballX,ballY,ballZ);        //moving it toward the screen a bit on creation
+    glScalef(1+scale,1+scale,1+scale); //scalede
 	display();
 	glPopMatrix();
-}
-
-void idle(void)
-{
-	GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
-
-	glutSetWindow(win1);
-	thetime += 0.05;
-	light_position[1] = 1 + sin(thetime);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	display_win1();
-}
-
-/* ARGSUSED */
-void delayed_stop(int value)
-{
-	glutIdleFunc(NULL);
-}
-
-void it(int value)
-{
-	glutDestroyWindow(glutGetWindow());
-	printf("menu selection: win=%d, menu=%d\n", glutGetWindow(), glutGetMenu());
-	switch (value) {
-		case 1:
-			if (list == 1) {
-				list = 2;
-			} else {
-				list = 1;
-			}
-			break;
-		case 2:
-			exit(0);
-			break;
-		case 3:
-			glutAddMenuEntry("new entry", value + 9);
-			break;
-		case 4:
-			glutChangeToMenuEntry(1, "toggle it for drawing", 1);
-			glutChangeToMenuEntry(3, "motion done", 3);
-			glutIdleFunc(idle);
-			break;
-		case 5:
-			glutIdleFunc(NULL);
-			break;
-		case 6:
-			glutTimerFunc(2000, delayed_stop, 0);
-			break;
-		default:
-			printf("value = %d\n", value);
-	}
 }
 
 void init(void)
@@ -150,126 +131,11 @@ void init(void)
 	glTranslatef(0.0, 0.0, -1.0);
 }
 
-void menustate(int inuse)
-{
-	printf("menu is %s\n", inuse ? "INUSE" : "not in use");
-	if (!inuse) {
-	}
-}
-
-void keyboard(unsigned char key, int x, int y)
-{
-	if (isprint(key)) {
-		printf("key: `%c' %d,%d\n", key, x, y);
-	} else {
-		printf("key: 0x%x %d,%d\n", key, x, y);
-	}
-    
-    glTranslatef(0.0, 0.0, -1.0);
-    
-    
-}
-
-void special(int key, int x, int y)
-{
-	char *name;
-
-	switch (key) {
-		case GLUT_KEY_F1:
-			name = "F1";
-			break;
-		case GLUT_KEY_F2:
-			name = "F2";
-			break;
-		case GLUT_KEY_F3:
-			name = "F3";
-			break;
-		case GLUT_KEY_F4:
-			name = "F4";
-			break;
-		case GLUT_KEY_F5:
-			name = "F5";
-			break;
-		case GLUT_KEY_F6:
-			name = "F6";
-			break;
-		case GLUT_KEY_F7:
-			name = "F7";
-			break;
-		case GLUT_KEY_F8:
-			name = "F8";
-			break;
-		case GLUT_KEY_F9:
-			name = "F9";
-			break;
-		case GLUT_KEY_F10:
-			name = "F11";
-			break;
-		case GLUT_KEY_F11:
-			name = "F12";
-			break;
-		case GLUT_KEY_LEFT:
-			name = "Left";
-			break;
-		case GLUT_KEY_UP:
-			name = "Up";
-			break;
-		case GLUT_KEY_RIGHT:
-			name = "Right";
-			break;
-		case GLUT_KEY_DOWN:
-			name = "Down";
-			break;
-		case GLUT_KEY_PAGE_UP:
-			name = "Page up";
-			break;
-		case GLUT_KEY_PAGE_DOWN:
-			name = "Page down";
-			break;
-		case GLUT_KEY_HOME:
-			name = "Home";
-			break;
-		case GLUT_KEY_END:
-			name = "End";
-			break;
-		case GLUT_KEY_INSERT:
-			name = "Insert";
-			break;
-		default:
-			name = "UNKONW";
-			break;
-	}
-	printf("special: %s %d,%d\n", name, x, y);
-}
-
-void mouse(int button, int state, int x, int y)
-{
-	printf("button: %d %s %d,%d\n", button, state == GLUT_UP ? "UP" : "down", x, y);
-}
-
-void motion(int x, int y)
-{
-	printf("motion: %d,%d\n", x, y);
-}
-
-void visible(int status)
-{
-	printf("visible: %s\n", status == GLUT_VISIBLE ? "YES" : "no");
-}
-
-void enter_leave(int state)
-{
-	printf("enter/leave %d = %s\n",
-			glutGetWindow(),
-			state == GLUT_LEFT ? "left" : "entered");
-}
 
 
 void moveDisplay()
 {
-    move=move>20?move-=20:move+=1;
-    glutPostRedisplay();                //标记当前窗口需要重绘，否则不会旋转
-    sleep(10);
+    glutPostRedisplay();                //标记当前窗口需要重绘，否则不会移动/伸缩
 }
 
 
@@ -279,27 +145,12 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	win1 = glutCreateWindow("sphere");
-	glutEntryFunc(enter_leave);
 	init();
 	glutDisplayFunc(display_win1);
-    //glutKeyboardFunc(keyboard);
+    glutKeyboardFunc(keyboard_s);
     glutIdleFunc(moveDisplay);
-	glutCreateMenu(it);
-	glutAddMenuEntry("toggle draw mode", 1);
-	glutAddMenuEntry("exit", 2);
-	glutAddMenuEntry("new menu entry", 3);
-	glutAddMenuEntry("motion", 4);
-	glutAttachMenu(GLUT_LEFT_BUTTON);
-	glutCreateMenu(it);
-	glutAddMenuEntry("yes", 1);
-	glutAddMenuEntry("no", 2);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
-
-#if 0
-	glutMotionFunc(motion);
-#endif
-
 
 	glutMainLoop();
-	return 0;             /* ANSI C requires main to return int. */
+    glutFullScreen ();
+	return 0;
 }
