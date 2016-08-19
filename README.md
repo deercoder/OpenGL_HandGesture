@@ -26,7 +26,7 @@ only draw it in the display function with the glTranslatef()
 * set GLUT initial window position and size
 * add reshape function to avoid being ellipse instead of circle(avoid losing original shape)
 * add color control, use `c` to randomly change the color of sphere
-
+* add rolling effect, when moving upside/down/left/right
 
 
 ## Guide

@@ -37,6 +37,9 @@
 #include <GL/glut.h>
 #endif
 
+#define stripeImageWidth 32
+GLubyte stripeImage[4*stripeImageWidth];
+
 
 GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};
 GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
@@ -52,6 +55,29 @@ float scale = 0.0f;
 
 int win1;
 int list = 1;
+
+
+static GLfloat xequalzero[] = {1.0, 0.0, 0.0, 0.0};
+static GLfloat slanted[] = {1.0, 1.0, 1.0, 0.0};
+static GLfloat *currentCoeff;
+static GLenum currentPlane;
+static GLint currentGenMode;
+static float roangles;
+
+
+
+void makeStripeImage(void)
+{
+    int j;
+    
+    for (j = 0; j < stripeImageWidth; j++) {
+        stripeImage[4*j] = (GLubyte) ((j<=4) ? 255 : 0);
+        stripeImage[4*j+1] = (GLubyte) ((j>4) ? 255 : 0);
+        stripeImage[4*j+2] = (GLubyte) 0;
+        stripeImage[4*j+3] = (GLubyte) 255;
+    }
+}
+
 
 void display(void)
 {
@@ -86,13 +112,21 @@ void keyboard_s(unsigned char key, int x, int y)
     printf("trigger the keyboard, (%c,%d,%d)\n", key, x, y);
     switch (key)
     {
-        case 'h' : ballX -= 0.8f;
+        case 'h' :
+            ballX -= 0.8f;
+            roangles += 15.0f;
             break;
-        case 'l' : ballX  += 0.8f;
+        case 'l' :
+            ballX  += 0.8f;
+            roangles -= 15.0f;
             break;
-        case 'k' : ballY += 0.8f;
+        case 'k' :
+            ballY += 0.8f;
+            roangles += 15.0f;
             break;
-        case 'j' : ballY -= 0.8f;
+        case 'j' :
+            ballY -= 0.8f;
+            roangles -= 15.0f;
             break;
         case 'r' : ballZ += 0.8f;
             break;
@@ -115,6 +149,8 @@ void display_win1(void)
     glPushMatrix();
     glTranslatef(ballX, ballY, ballZ);    //moving it toward the screen a bit on creation
     glScalef(1+scale,1+scale,1+scale); //scaled
+    glRotatef(roangles, 0.0, 0.0, 1.0);
+    
     display();
     glPopMatrix();
     
@@ -126,8 +162,28 @@ void init(void)
 {
     gluQuadricDrawStyle(qobj, GLU_FILL);
     glNewList(1, GL_COMPILE);  /* create sphere display list */
-    gluSphere(qobj, /* radius */ 0.5, /* slices */ 100,  /* stacks*/ 100);
+    gluSphere(qobj, /* radius */ 0.3, /* slices */ 100,  /* stacks*/ 100);
     glEndList();
+    
+    /// start the texture
+    makeStripeImage();
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage1D(GL_TEXTURE_1D, 0, 4, stripeImageWidth, 0, GL_RGBA, GL_UNSIGNED_BYTE, stripeImage);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    currentCoeff = xequalzero;
+    currentGenMode = GL_OBJECT_LINEAR;
+    currentPlane = GL_OBJECT_PLANE;
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, currentGenMode);
+    glTexGenfv(GL_S, currentPlane, currentCoeff);
+    
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_1D);
+    
+    
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_TEXTURE);
@@ -142,6 +198,8 @@ void init(void)
               0.0, 0.0, 0.0,      /* center is at (0,0,0) */
               0.0, 1.0, 0.);      /* up is in positive Y direction */
     glTranslatef(0.0, 0.0, -1.0);
+    
+    roangles = 45.0f;
 }
 
 
