@@ -20,7 +20,12 @@ Check this post for detail: http://lnx.cx/docs/opengl-in-xcode/
 only draw it in the display function with the glTranslatef()
 * minor/major fix for keyboard control with respect to the shape and location of ball
 
-
+### August 18th
+* remove shadow, change move/scale(use larger changes/scales)
+* make the sphere more round(use more slices/stacks)
+* set GLUT initial window position and size
+* add reshape function to avoid being ellipse instead of circle(avoid losing original shape)
+* add color control, use `c` to randomly change the color of sphere
 
 
 
