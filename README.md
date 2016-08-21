@@ -28,6 +28,8 @@ only draw it in the display function with the glTranslatef()
 * add color control, use `c` to randomly change the color of sphere
 * add rolling effect, when moving upside/down/left/right
 
+### August 19th
+* adjust parameters for better rolling effect
 
 ## Guide
 
@@ -37,3 +39,4 @@ only draw it in the display function with the glTranslatef()
 * k - **move up**
 * p - **enlarge the ball, increase scale**
 * q - **make the ball smaller, decrease scale**
+* c - **change the color of the ball/sphere**

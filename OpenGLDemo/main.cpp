@@ -113,19 +113,19 @@ void keyboard_s(unsigned char key, int x, int y)
     switch (key)
     {
         case 'h' :
-            ballX -= 0.8f;
+            ballX -= 0.4f;
             roangles += 15.0f;
             break;
         case 'l' :
-            ballX  += 0.8f;
+            ballX  += 0.4f;
             roangles -= 15.0f;
             break;
         case 'k' :
-            ballY += 0.8f;
+            ballY += 0.4f;
             roangles += 15.0f;
             break;
         case 'j' :
-            ballY -= 0.8f;
+            ballY -= 0.4f;
             roangles -= 15.0f;
             break;
         case 'r' : ballZ += 0.8f;
@@ -146,13 +146,18 @@ void keyboard_s(unsigned char key, int x, int y)
 
 void display_win1(void)
 {
-    glPushMatrix();
-    glTranslatef(ballX, ballY, ballZ);    //moving it toward the screen a bit on creation
-    glScalef(1+scale,1+scale,1+scale); //scaled
-    glRotatef(roangles, 0.0, 0.0, 1.0);
-    
-    display();
-    glPopMatrix();
+
+    for (int i = 0; i < 8; i++) {
+        glPushMatrix();
+
+        glTranslatef(ballX, ballY, ballZ);    //moving it toward the screen a bit on creation
+        glScalef(1+scale,1+scale,1+scale); //scaled
+        glRotatef(roangles, 0.0, 0.0, 1.0);
+        display();
+
+        glPopMatrix();
+    }
+
     
     // set the color of the sphere, color is defined by qaDefault
     glMaterialfv(GL_FRONT, GL_DIFFUSE, qaDefault);
